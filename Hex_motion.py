@@ -2,6 +2,8 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import RegularPolygon
 import numpy as np
 
+#From https://stackoverflow.com/questions/46525981/how-to-plot-x-y-z-coordinates-in-the-shape-of-a-hexagonal-grid
+
 coord = [[0,0,0],[0,1,-1],[-1,1,0],[-1,0,1],[0,-1,1],[1,-1,0],[1,0,-1]]
 colors = [["Green"],["Blue"],["Green"],["Green"],["Red"],["Green"],["Green"]]
 labels = [['yes'],['no'],['yes'],['no'],['yes'],['no'],['no']]
