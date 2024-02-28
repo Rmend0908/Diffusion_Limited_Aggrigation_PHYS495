@@ -1,15 +1,17 @@
+#%%time
 #pixel motion 495
-#Save Seed data!
+#TODO Save Seed data!
 
 import numpy
 import random
 from PIL import Image
 
-n=256
+n=500
 data = numpy.zeros((n,n,3),dtype=numpy.uint8)
-danger_zone=numpy.zeros((n,n,1),dtype=numpy.uint8)
+danger_zone=numpy.zeros((n+1,n+1,1),dtype=numpy.uint8)
 
-live_points_count = 7000
+live_points_count = 100
+original_count = live_points_count
 particles = []
 
 #Create random set of live points, and make them visible
@@ -49,7 +51,7 @@ data[center][center+1]=[0,255,0]
 image = Image.fromarray(data)
 image.show()
 
-for frame in range(100000):
+for frame in range(50000):
     live_points_count = len(particles)
     rand_motion = numpy.random.randint(0,4,live_points_count)
     movement = list(zip(particles,rand_motion))
@@ -67,7 +69,7 @@ for frame in range(100000):
             #Particle moves upwards!
             y+=1
 
-            if(y>=256):
+            if(y>=n):
                 y=0   
             data[x][y]=[255,255,255]
             particles[idx] = (x,y)
@@ -76,7 +78,7 @@ for frame in range(100000):
             #Particle moves downwards!
             y-=1
             if(y<=-1):
-                y=255
+                y=n-1
             data[x][y]=[255,255,255]
             particles[idx] = (x,y)
 
@@ -85,14 +87,14 @@ for frame in range(100000):
             #Particle moves left!
             x-=1
             if(x<=-1):
-                x=255
+                x=n-1
             data[x][y]=[255,255,255]
             particles[idx] = (x,y)
 
         elif(pixel[1]==3):
             #Particle moves right!
             x+=1
-            if(x>=256):
+            if(x>=n):
                 x=0
             data[x][y]=[255,255,255]
             particles[idx] = (x,y)
@@ -103,13 +105,15 @@ for frame in range(100000):
         #make the danger-zone check
         if(danger_zone[x][y]==1):
             #print('Danger Zoned!')
-            data[x][y] = [255,0,0]
-            if(frame>10000/2): data[x][y] = [0,0,255]
-            elif(frame>10000/3): data[x][y] = [0,255,0]
+            if(live_points_count > 3*(original_count//4)): data[x][y] = [255,0,0]
+            elif(live_points_count > 2*(original_count//4)): data[x][y] = [0,255,0]
+            elif(live_points_count > original_count//4): data[x][y] = [0,0,255]
+            else: data[x][y] = [255,0,255]
+            
             
             particles.pop(idx) # WARNING probably O(N)
             movement.pop(idx)
-
+            #TODO When fractal reaches end, danger zone attempts to grow larger. Prevent this.
             danger_zone[x-1][y]=1
             danger_zone[x+1][y]=1
             #data[x-1][y]=[0,255,0]
