@@ -4,13 +4,17 @@
 
 import numpy
 import random
+import os
 from PIL import Image
 
-n=500
+#Dr.Abram's code
+from matplotlib import pyplot as plt
+
+n=250
 data = numpy.zeros((n,n,3),dtype=numpy.uint8)
 danger_zone=numpy.zeros((n+1,n+1,1),dtype=numpy.uint8)
 
-live_points_count = 100
+live_points_count = 1000
 original_count = live_points_count
 particles = []
 
@@ -51,7 +55,7 @@ data[center][center+1]=[0,255,0]
 image = Image.fromarray(data)
 image.show()
 
-for frame in range(50000):
+for frame in range(5000):
     live_points_count = len(particles)
     rand_motion = numpy.random.randint(0,4,live_points_count)
     movement = list(zip(particles,rand_motion))
@@ -130,5 +134,21 @@ for frame in range(50000):
         
 image = Image.fromarray(data)
 image.show()
+
+# from Dr.Abram -- show data
+plt.imshow(data)
+# save data
+with open('/tmp/result2.np', 'wb') as f:
+    numpy.save(f, numpy.array(data))
+
+list_of_files = ['/tmp/result1.np']
+
+all_results = []
+for file in list_of_files:
+    with open(file, 'rb') as f:
+        all_results.append(numpy.load(f))
+        
+all_results = numpy.array(all_results)
+all_results.shape # we see from the shape, that we have two figures 200 x 200
         
         
