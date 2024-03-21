@@ -5,11 +5,10 @@ import random
 from PIL import Image
 
 n=256
-temp=2 #this is a measure of how much the pixels move per frame
 data = numpy.zeros((n,n,3),dtype=numpy.uint8)
 danger_zone=numpy.zeros((n,n,1),dtype=numpy.uint8)
 
-live_points_count = 600
+live_points_count = 1000
 particles = []
 
 #Create random set of live points, and make them visible
@@ -53,7 +52,7 @@ for frame in range(10000):
     live_points_count = len(particles)
     rand_motion = numpy.random.randint(0,4,live_points_count)
     movement = list(zip(particles,rand_motion))
-    #print('iteration: ' + str(frame) + ' Particle Count: ' + str(live_points_count))
+    print('iteration: ' + str(frame) + ' Particle Count: ' + str(live_points_count))
 
     for pixel in movement:
         #set current spot to black, pixel[0] is the particle and pixel[1] is the random motion for particle
@@ -63,7 +62,7 @@ for frame in range(10000):
 
         if(pixel[1]==0):
             #Particle moves upwards!
-            y+=temp
+            y+=1
 
             if(y>=256):
                 y=0   
@@ -72,7 +71,7 @@ for frame in range(10000):
 
         elif(pixel[1]==1):
             #Particle moves downwards!
-            y-=temp
+            y-=1
             if(y<=-1):
                 y=255
             data[x][y]=[255,255,255]
@@ -81,7 +80,7 @@ for frame in range(10000):
 
         elif(pixel[1]==2):
             #Particle moves left!
-            x-=temp
+            x-=1
             if(x<=-1):
                 x=255
             data[x][y]=[255,255,255]
@@ -89,7 +88,7 @@ for frame in range(10000):
 
         elif(pixel[1]==3):
             #Particle moves right!
-            x+=temp
+            x+=1
             if(x>=256):
                 x=0
             data[x][y]=[255,255,255]
@@ -99,10 +98,6 @@ for frame in range(10000):
             print('error!!!')
 
         #make the danger-zone check
-        #TODO The check needs to check all of the spaces that the pixel traveled.
-        #TODO Take the rand_motion varaible to determine what direction the checks need to be.
-        #TODO In the direction of motion, check all of the spots between X-temp and X
-        #notice that this will greatly slow down the runtime... What do do?
         if(danger_zone[x][y]==1):
             #print('Danger Zoned!')
             data[x][y] = [255,0,0]
